@@ -107,7 +107,7 @@ function StatItem({
  * Поддерживает динамическое отображение любого количества дисков
  */
 function DiskCard({ disk, index }: { disk: DiskInfo; index: number }) {
-  const usageColor = getUsageColor(disk.usagePercent)
+  const usageColor = getUsageColor(disk.usagePercent ?? 0)
   
   // Определяем цвет иконки в зависимости от индекса для визуального разделения
   const iconColors = ['text-chart-1', 'text-chart-2', 'text-chart-3', 'text-chart-4', 'text-chart-5']
@@ -144,25 +144,25 @@ function DiskCard({ disk, index }: { disk: DiskInfo; index: number }) {
 
       {/* Прогресс-бар использования */}
       <Progress
-        value={disk.usagePercent}
+        value={Math.min(disk.usagePercent ?? 0, 100)}
         className={cn('h-2', usageColor)}
       />
 
       {/* Статистика использования */}
       <div className="flex items-center justify-between text-xs">
         <span className="text-muted-foreground">
-          Использовано: <span className="font-mono text-foreground">{formatBytes(disk.usedBytes)}</span>
+          Использовано: <span className="font-mono text-foreground">{formatBytes(disk.usedBytes ?? 0)}</span>
         </span>
         <span className="font-mono font-medium text-foreground">
-          {disk.usagePercent.toFixed(1)}%
+          {(disk.usagePercent ?? 0).toFixed(1)}%
         </span>
       </div>
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span>
-          Свободно: <span className="font-mono text-foreground">{formatBytes(disk.freeBytes)}</span>
+          Свободно: <span className="font-mono text-foreground">{formatBytes(disk.freeBytes ?? 0)}</span>
         </span>
         <span>
-          Всего: <span className="font-mono text-foreground">{formatBytes(disk.totalBytes)}</span>
+          Всего: <span className="font-mono text-foreground">{formatBytes(disk.totalBytes ?? 0)}</span>
         </span>
       </div>
     </div>
@@ -194,7 +194,7 @@ export function SystemStatsCard() {
   }, [mutate])
 
   const cpuUsageColor = getUsageColor(data?.cpuUsage ?? 0, { warning: 70, critical: 85 })
-  const ramUsagePercent = data ? (data.ramUsed / data.ramTotal) * 100 : 0
+  const ramUsagePercent = data ? ((data.ramUsed ?? 0) / (data.ramTotal ?? 1)) * 100 : 0
   const ramUsageColor = getUsageColor(ramUsagePercent, { warning: 75, critical: 90 })
   const tempColor = getTempColor(data?.cpuTemp ?? 0)
 
@@ -254,18 +254,20 @@ export function SystemStatsCard() {
                     <span className="text-xs text-muted-foreground">Температура</span>
                   </div>
                   <span className={cn('font-mono text-sm font-bold', tempColor)}>
-                    {data.cpuTemp.toFixed(1)}°C
+                    {(data.cpuTemp ?? 0).toFixed(1)}°C
                   </span>
                 </div>
-                
-                {data.cpuVoltage !== undefined && (
+
+
+                {data.cpuVoltage !== null && (
                   <div className="flex items-center justify-between rounded-lg border border-border bg-secondary/30 p-3">
                     <div className="flex items-center gap-2">
                       <Zap className="h-4 w-4 text-warning" />
                       <span className="text-xs text-muted-foreground">Напряжение</span>
                     </div>
                     <span className="font-mono text-sm font-medium text-foreground">
-                      {data.cpuVoltage.toFixed(2)}V
+                   
+                      {data.cpuVoltage?.toFixed(2)}
                     </span>
                   </div>
                 )}
@@ -276,8 +278,8 @@ export function SystemStatsCard() {
                 icon={Activity}
                 label="Загрузка CPU"
                 value={`${data.cpuUsage.toFixed(1)}%`}
-                subValue={data.cpuFrequency ? `@ ${data.cpuFrequency} MHz` : undefined}
-                progress={data.cpuUsage}
+                subValue={data.cpuFrequency != null ? `@ ${data.cpuFrequency} MHz` : undefined}
+                progress={data.cpuUsage ?? 0}
                 progressColor={cpuUsageColor}
               />
             </div>
@@ -293,20 +295,20 @@ export function SystemStatsCard() {
               <StatItem
                 icon={MemoryStick}
                 label="RAM"
-                value={formatBytes(data.ramUsed)}
-                subValue={`/ ${formatBytes(data.ramTotal)}`}
+                value={formatBytes(data.ramUsed ?? 0)}
+                subValue={`/ ${formatBytes(data.ramTotal ?? 0)}`}
                 progress={ramUsagePercent}
                 progressColor={ramUsageColor}
               />
 
               {/* Swap (если есть) */}
-              {data.swapTotal !== undefined && data.swapTotal > 0 && (
+              {data.swapTotal != null && data.swapTotal > 0 && (
                 <StatItem
                   icon={MemoryStick}
                   label="Swap"
                   value={formatBytes(data.swapUsed ?? 0)}
-                  subValue={`/ ${formatBytes(data.swapTotal)}`}
-                  progress={((data.swapUsed ?? 0) / data.swapTotal) * 100}
+                  subValue={`/ ${formatBytes(data.swapTotal ?? 0)}`}
+                  progress={((data.swapUsed ?? 0) / (data.swapTotal ?? 1)) * 100}
                   progressColor="[&>div]:bg-chart-4"
                 />
               )}
@@ -316,16 +318,16 @@ export function SystemStatsCard() {
             <div className="space-y-3">
               <h3 className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
                 <HardDrive className="h-4 w-4" />
-                Диски ({data.disks.length})
+                Диски ({(data.disks ?? []).length})
               </h3>
               
               <div className="space-y-2">
-                {data.disks.map((disk, index) => (
+                {(data.disks ?? []).map((disk, index) => (
                   <DiskCard key={disk.device} disk={disk} index={index} />
                 ))}
               </div>
 
-              {data.disks.length === 0 && (
+              {(data.disks ?? []).length === 0 && (
                 <div className="rounded-lg border border-border bg-secondary/20 p-3 text-center text-sm text-muted-foreground">
                   Нет данных о дисках
                 </div>
@@ -345,11 +347,11 @@ export function SystemStatsCard() {
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">Загрузка</span>
                     <span className="font-mono text-sm font-medium text-success">
-                      ↓ {formatSpeed(data.network.rxBytesPerSec)}
+                      ↓ {formatSpeed(data.network?.rxBytesPerSec ?? 0)}
                     </span>
                   </div>
                   <div className="mt-1 text-xs text-muted-foreground">
-                    Всего: <span className="font-mono">{formatBytes(data.network.rxTotalBytes)}</span>
+                    Всего: <span className="font-mono">{formatBytes(data.network?.rxTotalBytes ?? 0)}</span>
                   </div>
                 </div>
                 
@@ -357,11 +359,11 @@ export function SystemStatsCard() {
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-muted-foreground">Отдача</span>
                     <span className="font-mono text-sm font-medium text-chart-2">
-                      ↑ {formatSpeed(data.network.txBytesPerSec)}
+                      ↑ {formatSpeed(data.network?.txBytesPerSec ?? 0)}
                     </span>
                   </div>
                   <div className="mt-1 text-xs text-muted-foreground">
-                    Всего: <span className="font-mono">{formatBytes(data.network.txTotalBytes)}</span>
+                    Всего: <span className="font-mono">{formatBytes(data.network?.txTotalBytes ?? 0)}</span>
                   </div>
                 </div>
               </div>
@@ -380,13 +382,13 @@ export function SystemStatsCard() {
                     <Clock className="h-4 w-4" />
                     <span>Uptime</span>
                   </div>
-                  <span className="font-mono text-foreground">{data.uptime}</span>
+                  <span className="font-mono text-foreground">{data.uptime ?? 'N/A'}</span>
                 </div>
                 
                 {data.kernelVersion && (
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Ядро</span>
-                    <span className="font-mono text-xs text-foreground">{data.kernelVersion}</span>
+                    <span className="font-mono text-xs text-foreground">{data.kernelVersion ?? 'N/A'}</span>
                   </div>
                 )}
               </div>
