@@ -4,7 +4,7 @@ import os
 
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 import config
 
 INSTANCE_ID = os.environ["YANDEX_INSTANCE_ID"]
