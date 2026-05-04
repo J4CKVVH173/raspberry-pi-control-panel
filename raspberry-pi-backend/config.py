@@ -26,11 +26,11 @@ def get_script_path(category: str, script_name: str) -> str:
 SCRIPTS_CONFIG: Dict[str, Dict[str, str]] = {
     "yandex": {
         "start_vps": get_script_path("yandex", "start_vps"),
-        "status": get_script_path("yandex", "status"),
+        "status": get_script_path("yandex", "check_status"),
     },
     "jellyfin": {
-        "status": get_script_path("jellyfin", "status"),
-        "logs": get_script_path("jellyfin", "logs"),
+        "status": get_script_path("jellyfin", "check_status"),
+        "logs": get_script_path("jellyfin", "get_logs"),
         "restart": get_script_path("jellyfin", "restart"),
     },
 }
@@ -61,7 +61,7 @@ DISK_CONFIG = {
 }
 
 # Utility functions for scripts
-def get_yc_path() -> str:
+def get_yandex_cloud_path() -> str:
     return os.environ.get("PI_YC_PATH", "/usr/local/bin/yc")
 
 def get_jellyfin_log_path() -> str:
