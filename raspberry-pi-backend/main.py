@@ -18,41 +18,13 @@ import psutil
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from . import config
 
-# Конфигурация путей к скриптам
-# Измените эти пути на реальные пути к вашим скриптам
-SCRIPTS_CONFIG = {
-    "yandex": {
-        "start_vps": "/home/pi/scripts/yandex/start_vps.py",
-        "status": "/home/pi/scripts/yandex/check_status.py",
-    },
-    "jellyfin": {
-        "status": "/home/pi/scripts/jellyfin/check_status.py",
-        "logs": "/home/pi/scripts/jellyfin/get_logs.py",
-        "restart": "/home/pi/scripts/jellyfin/restart.py",
-    },
-}
-
-# Конфигурация дисков для мониторинга
-# Добавляйте новые диски сюда - они автоматически появятся в интерфейсе
-DISK_CONFIG = {
-    # Разрешённые точки монтирования
-    "allowed_mount_points": {"/", "/boot/firmware", "/mnt/SSD4TB/D"},
-    # Регулярное выражение для устройств
-    "allowed_devices_pattern": r"mmcblk0p[12]|sd[a-z]+\d+",
-    # Пользовательские метки для дисков
-    "labels": {
-        "/": "Системный диск",
-        "/boot/firmware": "Boot раздел",
-        "/mnt/SSD4TB/D": "SSD 4TB Данные",
-    },
-}
+SCRIPTS_CONFIG = config.SCRIPTS_CONFIG
+DISK_CONFIG = config.DISK_CONFIG
 
 # Список разрешённых команд для безопасности
-ALLOWED_COMMANDS = set()
-for category in SCRIPTS_CONFIG.values():
-    for script_path in category.values():
-        ALLOWED_COMMANDS.add(script_path)
+ALLOWED_COMMANDS = set(path for category in SCRIPTS_CONFIG.values() for path in category.values())
 
 app = FastAPI(
     title="Raspberry Pi Dashboard API",

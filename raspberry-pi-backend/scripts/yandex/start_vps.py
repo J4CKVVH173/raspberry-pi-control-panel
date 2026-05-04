@@ -2,9 +2,7 @@ import subprocess
 import sys
 import os
 
-from dotenv import load_dotenv
-
-load_dotenv()
+import config
 
 INSTANCE_ID = os.environ["YANDEX_INSTANCE_ID"]
 
@@ -26,7 +24,7 @@ def run_command(cmd: list[str]) -> str:
 def get_instance_status(instance_id: str) -> str:
     output = run_command(
         [
-            "/home/andrey/yandex-cloud/bin/yc",
+            config.get_yandex_cloud_path(),
             "compute",
             "instance",
             "get",
@@ -45,7 +43,7 @@ def get_instance_status(instance_id: str) -> str:
 def start_instance(instance_id: str) -> None:
     run_command(
         [
-            "/home/andrey/yandex-cloud/bin/yc",
+            config.get_yandex_cloud_path(),
             "compute",
             "instance",
             "start",

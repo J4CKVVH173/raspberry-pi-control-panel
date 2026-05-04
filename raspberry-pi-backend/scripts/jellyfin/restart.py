@@ -6,6 +6,10 @@
 import subprocess
 import sys
 import time
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+import config
 
 
 def run_command(cmd: list[str], description: str) -> bool:
@@ -42,7 +46,7 @@ def main():
     
     # Шаг 2: Очистка кэша (опционально)
     print("[2/4] Clearing cache...")
-    cache_path = "/var/cache/jellyfin"
+    cache_path = config.get_jellyfin_cache_path()
     try:
         result = subprocess.run(
             ["sudo", "rm", "-rf", f"{cache_path}/transcodes/*"],

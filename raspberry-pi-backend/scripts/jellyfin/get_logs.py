@@ -5,6 +5,10 @@
 
 import subprocess
 import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+import config
 
 
 def get_journalctl_logs(lines: int = 30):
@@ -21,8 +25,9 @@ def get_journalctl_logs(lines: int = 30):
         return f"Ошибка получения логов: {e}"
 
 
-def get_file_logs(log_path: str = "/var/log/jellyfin/jellyfin.log", lines: int = 30):
+def get_file_logs(lines: int = 30):
     """Получает логи из файла"""
+    log_path = config.get_jellyfin_log_path()
     try:
         result = subprocess.run(
             ["tail", "-n", str(lines), log_path],
