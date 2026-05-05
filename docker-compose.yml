@@ -1,0 +1,66 @@
+version: '3.9'
+
+services:
+  # Backend - FastAPI Python service
+  backend:
+    build:
+      context: ./raspberry-pi-backend
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8080:8080"
+    environment:
+      - PI_DISK_MOUNT_POINTS=/,/boot/firmware,/mnt/SSD4TB/D
+      - PI_DISK_LABELS=/:Системный диск,/boot/firmware:Boot раздел,/mnt/SSD4TB/D:SSD 4TB Данные
+      - PI_DISK_DEVICE_PATTERN=mmcblk0p[12]|sd[a-z]+\d+
+      - YANDEX_INSTANCE_ID=fhm1234abcd5678efgh
+      - PI_YC_PATH=/usr/local/bin/yc
+      - PI_JELLYFIN_LOG_PATH=/var/log/jellyfin/jellyfin.log
+      - PI_JELLYFIN_CACHE_PATH=/var/cache/jellyfin
+    volumes:
+      - ./raspberry-pi-backend/scripts:/app/scripts:ro
+      - /var/log/jellyfin:/var/log/jellyfin:ro
+      - /var/cache/jellyfin:/var/cache/jellyfin
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - app-network
+
+  # Frontend - Next.js service
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - BACKEND_URL=http://backend:8080
+      - NEXT_TELEMETRY_DISABLED=1
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/system/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+# Deployment notes:
+# - Backend volumes map host paths for logs and scripts
+# - Frontend BACKEND_URL points to backend service internally
+# - Health checks ensure proper startup order
+# - Multi-arch compatible for Raspberry Pi (ARM64)
