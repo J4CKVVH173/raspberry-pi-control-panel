@@ -19,15 +19,21 @@ export async function proxyToBackend(path: string, request: Request): Promise<Re
     body: request.body,
   });
   
-  // Forward response headers (except cors-related for security)
-  const responseHeaders = new Headers();
-  for (const [key, value] of backendResponse.headers.entries()) {
-    if (!key.toLowerCase().startsWith('access-control-') && key !== 'content-encoding') {
-      responseHeaders.set(key, value);
-    }
-  }
+  // Buffer and forward response as text to handle streaming/compression reliably
+  const contentType = backendResponse.headers.get('content-type') || 'application/json';
+  const backendText = await backendResponse.text();
   
-  return new Response(backendResponse.body, {
+  const responseHeaders = new Headers(backendResponse.headers);
+  // Remove CORS headers (not needed for proxy)
+  responseHeaders.delete('access-control-allow-origin');
+  responseHeaders.delete('access-control-allow-methods');
+  responseHeaders.delete('access-control-allow-headers');
+  responseHeaders.delete('access-control-allow-credentials');
+  responseHeaders.delete('access-control-max-age');
+  responseHeaders.set('content-type', contentType);
+  // content-length will be set automatically by Response
+  
+  return new Response(backendText, {
     status: backendResponse.status,
     statusText: backendResponse.statusText,
     headers: responseHeaders,
