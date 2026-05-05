@@ -13,11 +13,16 @@ export async function proxyToBackend(path: string, request: Request): Promise<Re
     }
   }
   
-  const backendResponse = await fetch(url.toString(), {
+  // Prepare fetch init with conditional duplex for undici/Next.js 15+ (required for POST body streams)
+  const init: RequestInit = {
     method: request.method,
     headers,
-    body: request.body,
-  });
+  };
+  if (request.method !== 'GET' && request.method !== 'HEAD') {
+    init.body = request.body;
+    (init as any).duplex = 'half';
+  }
+  const backendResponse = await fetch(url.toString(), init);
   
   // Buffer and forward response as text to handle streaming/compression reliably
   const contentType = backendResponse.headers.get('content-type') || 'application/json';
