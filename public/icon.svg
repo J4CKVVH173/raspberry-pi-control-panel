@@ -1,26 +1,37 @@
-<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <style>
-    @media (prefers-color-scheme: light) {
-      .background { fill: black; }
-      .foreground { fill: white; }
-    }
-    @media (prefers-color-scheme: dark) {
-      .background { fill: white; }
-      .foreground { fill: black; }
-    }
-  </style>
-  <g clip-path="url(#clip0_7960_43945)">
-    <rect class="background" width="180" height="180" rx="37" />
-    <g style="transform: scale(95%); transform-origin: center">
-      <path class="foreground"
-        d="M101.141 53H136.632C151.023 53 162.689 64.6662 162.689 79.0573V112.904H148.112V79.0573C148.112 78.7105 148.098 78.3662 148.072 78.0251L112.581 112.898C112.701 112.902 112.821 112.904 112.941 112.904H148.112V126.672H112.941C98.5504 126.672 86.5638 114.891 86.5638 100.5V66.7434H101.141V100.5C101.141 101.15 101.191 101.792 101.289 102.422L137.56 66.7816C137.255 66.7563 136.945 66.7434 136.632 66.7434H101.141V53Z" />
-      <path class="foreground"
-        d="M65.2926 124.136L14 66.7372H34.6355L64.7495 100.436V66.7372H80.1365V118.47C80.1365 126.278 70.4953 129.958 65.2926 124.136Z" />
-    </g>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Raspberry Pi themed icon - raspberry fruit -->
   <defs>
-    <clipPath id="clip0_7960_43945">
-      <rect width="180" height="180" fill="white" />
-    </clipPath>
+    <linearGradient id="berryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e85d75"/>
+      <stop offset="100%" style="stop-color:#c51a4a"/>
+    </linearGradient>
   </defs>
+  
+  <!-- Leaf/stem -->
+  <path d="M16 4 C14 6 15 8 16 9 C17 8 18 6 16 4" fill="#75a928"/>
+  <path d="M13 5 C11 4 10 5 11 7 C12 7 13 6 13 5" fill="#75a928"/>
+  <path d="M19 5 C21 4 22 5 21 7 C20 7 19 6 19 5" fill="#75a928"/>
+  
+  <!-- Berry body - made of circles (drupelets) -->
+  <circle cx="12" cy="13" r="3.5" fill="url(#berryGrad)"/>
+  <circle cx="20" cy="13" r="3.5" fill="url(#berryGrad)"/>
+  <circle cx="16" cy="12" r="3.5" fill="url(#berryGrad)"/>
+  
+  <circle cx="10" cy="18" r="3.5" fill="url(#berryGrad)"/>
+  <circle cx="16" cy="17" r="3.5" fill="url(#berryGrad)"/>
+  <circle cx="22" cy="18" r="3.5" fill="url(#berryGrad)"/>
+  
+  <circle cx="12" cy="23" r="3.5" fill="url(#berryGrad)"/>
+  <circle cx="20" cy="23" r="3.5" fill="url(#berryGrad)"/>
+  <circle cx="16" cy="22" r="3.5" fill="url(#berryGrad)"/>
+  
+  <circle cx="16" cy="27" r="3" fill="url(#berryGrad)"/>
+  
+  <!-- Highlights on drupelets -->
+  <circle cx="11" cy="12" r="1" fill="rgba(255,255,255,0.3)"/>
+  <circle cx="15" cy="11" r="1" fill="rgba(255,255,255,0.3)"/>
+  <circle cx="19" cy="12" r="1" fill="rgba(255,255,255,0.3)"/>
+  <circle cx="9" cy="17" r="1" fill="rgba(255,255,255,0.3)"/>
+  <circle cx="15" cy="16" r="1" fill="rgba(255,255,255,0.3)"/>
+  <circle cx="21" cy="17" r="1" fill="rgba(255,255,255,0.3)"/>
 </svg>

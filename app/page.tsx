@@ -8,7 +8,7 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
+        <div className="mx-auto flex max-w-full items-center justify-between px-4 py-4 sm:px-6 lg:px-8 xl:px-12">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <Server className="h-5 w-5" />
@@ -26,8 +26,8 @@ export default function DashboardPage() {
       </header>
 
       {/* Main Content */}
-      <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-        <div className="grid gap-6 lg:grid-cols-2">
+      <main className="mx-auto max-w-full px-4 py-6 sm:px-6 lg:px-8 xl:px-12">
+        <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
           {/* Раздел 1: Управление Яндекс Облаком */}
           <CommandCard
             title="Яндекс Облако"
@@ -45,7 +45,7 @@ export default function DashboardPage() {
           />
 
           {/* Раздел 3: Статус системы - на всю ширину на больших экранах */}
-          <div className="lg:col-span-2">
+          <div className="col-span-1 md:col-span-2">
             <SystemStatsCard />
           </div>
         </div>
